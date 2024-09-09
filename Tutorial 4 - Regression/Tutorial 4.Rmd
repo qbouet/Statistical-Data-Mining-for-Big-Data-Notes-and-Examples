@@ -1,0 +1,395 @@
+---
+title: "Tutorial 4"
+author: "Quentin Bouet"
+date: "2024-08-13"
+output:
+  pdf_document:
+    highlight: breezedark
+  word_document: default
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Regression Analysis
+
+From this week onwards, we will be exploring different types of supervised learning methods. Generally, a
+predictive task can be either a classification or regression problem. In a classification problem, the goal is to
+categorise data into predefined classes or categories. For example, classifying emails as “spam” or “not spam”
+involves predicting which of the discrete categories an email belongs to based on its features. In contrast,
+a regression problem involves predicting a continuous numerical value. For instance, forecasting the price
+of a house based on features like location, size, and number of rooms requires estimating a continuous output.
+While classification yields discrete outcomes, regression provides a continuous range of values, and the choice
+between the two depends on the nature of the prediction task at hand.
+
+We will start with the simplest approach: assuming a linear relationship between predictors and response.
+This week, we focus on regression problems, and next week, we will explore models for classification problems.
+
+There is so much to learn about linear and generalized linear models; attempting to thoroughly understand
+the art of linear modelling in just one or two lectures is ludicrous. But this is unfortunately the modern
+approach to ‘Data Science’: knowing how to program it without understanding the ins and outs of the model.
+Only by truly understanding linear or generalised linear model can we grasp why they are often not desirable
+for the problem at hand, yet still frequently chosen as contenders.
+
+Discuss the following topics:
+
+What is the model structure of a linear model?
+
+What are the parameters of a linear model?
+
+How do we estimate the parameters?
+
+Why is there a variance associated with each parameter?
+
+Explain a residual in layman’s terms
+
+What are assumptions of a linear model?
+
+Explain variance-bias trade-off
+
+Describe how forward and backward model selection work?
+
+Assume a predictor has four categories; explain why R only produces coefficients for three of those
+categories.
+
+## 3.6 Lab: Linear Regression
+
+### 3.6.1 Libraries
+
+The library() function is used to load libraries, or groups of functions library()
+and data sets that are not included in the base R distribution. Basic func-
+tions that perform least squares linear regression and other simple analyses
+come standard with the base distribution, but more exotic functions require
+additional libraries. Here we load the MASS package, which is a very large
+collection of data sets and functions. We also load the ISLR2 package, which
+includes the data sets associated with this book.
+
+```{r}
+library(MASS)
+library(ISLR2)
+```
+
+If you receive an error message when loading any of these libraries, it
+likely indicates that the corresponding library has not yet been installed
+on your system. Some libraries, such as MASS, come with R and do not need to
+be separately installed on your computer. However, other packages, such as
+ISLR2, must be downloaded the first time they are used. This can be done di-
+rectly from within R. For example, on a Windows system, select the Install
+package option under the Packages tab. After you select any mirror site, a
+list of available packages will appear. Simply select the package you wish
+to install and R will automatically download the package. Alternatively,
+this can be done at the R command line via install.packages("ISLR2").
+This installation only needs to be done the first time you use a package.
+However, the library() function must be called within each R session.
+
+### 3.6.2 Simple Linear Regression
+
+The ISLR2 library contains the Boston data set, which records medv (me-
+dian house value) for 506 census tracts in Boston. We will seek to predict
+medv using 12 predictors such as rm (average number of rooms per house),
+age (proportion of owner-occupied units built prior to 1940) and lstat (per-
+cent of households with low socioeconomic status).
+
+```{r}
+head(Boston)
+```
+
+To find out more about the data set, we can type ?Boston.
+We will start by using the lm() function to fit a simple linear regression
+model, with medv as the response and lstat as the predictor. The basic
+syntax is lm(y ~ x, data), where y is the response, x is the predictor, and
+data is the data set in which these two variables are kept.
+
+
+```{r}
+lm.fit <- lm(medv ~ lstat, Boston)
+
+# OR
+attach(Boston)
+lm.fit <- lm(medv ~ lstat)
+```
+
+If we type lm.fit, some basic information about the model is output.
+For more detailed information, we use summary(lm.fit). This gives us p-
+values and standard errors for the coefficients, as well as the R2 statistic
+and F -statistic for the model.
+
+```{r}
+lm.fit
+summary(lm.fit)
+```
+
+We can use the names() function in order to find out what other pieces
+of information are stored in lm.fit. Although we can extract these quan-
+tities by name—e.g. lm.fit$coefficients—it is safer to use the extractor
+functions like coef() to access them. 
+
+```{r}
+names(lm.fit)
+coef(lm.fit)
+```
+
+In order to obtain a confidence interval for the coefficient estimates, we can
+use the confint() command.
+
+```{r}
+confint(lm.fit)
+```
+
+The predict() function can be used to produce confidence intervals and
+prediction intervals for the prediction of medv for a given value of lstat.
+
+```{r}
+predict(lm.fit , data.frame(lstat = (c(5, 10, 15))),
+interval = "confidence")
+predict(lm.fit , data.frame(lstat = (c(5, 10, 15))),
+interval = "prediction")
+```
+
+For instance, the 95 % confidence interval associated with a lstat value of
+10 is (24.47, 25.63), and the 95 % prediction interval is (12.828, 37.28). As
+expected, the confidence and prediction intervals are centered around the
+same point (a predicted value of 25.05 for medv when lstat equals 10), but
+the latter are substantially wider.
+We will now plot medv and lstat along with the least squares regression
+line using the plot() and abline() functions. 
+
+```{r}
+plot(lstat , medv)
+abline(lm.fit)
+```
+
+There is some evidence for non-linearity in the relationship between lstat
+and medv. We will explore this issue later in this lab.
+The abline() function can be used to draw any line, not just the least
+squares regression line. To draw a line with intercept a and slope b, we
+type abline(a, b). Below we experiment with some additional settings for
+plotting lines and points. The lwd = 3 command causes the width of the
+regression line to be increased by a factor of 3; this works for the plot() and
+lines() functions also. We can also use the pch option to create different
+plotting symbols.
+
+```{r}
+plot(lstat , medv)
+abline(lm.fit, lwd = 3)
+plot(lstat , medv)
+abline(lm.fit , lwd = 3, col = "red")
+plot(lstat , medv , col = "red")
+plot(lstat , medv , pch = 20)
+plot(lstat , medv , pch = "+")
+plot(1:20 , 1:20, pch = 1:20)
+```
+
+Next we examine some diagnostic plots, several of which were discussed
+in Section 3.3.3. Four diagnostic plots are automatically produced by ap-
+plying the plot() function directly to the output from lm(). In general, this
+command will produce one plot at a time, and hitting Enter will generate
+the next plot. However, it is often convenient to view all four plots together.
+We can achieve this by using the par() and mfrow() functions, which tell R
+to split the display screen into separate panels so that multiple plots can
+be viewed simultaneously. For example, par(mfrow = c(2, 2)) divides the
+plotting region into a 2 × 2 grid of panels.
+
+```{r}
+par(mfrow = c(2, 2))
+plot(lm.fit)
+```
+
+Alternatively, we can compute the residuals from a linear regression fit
+using the residuals() function. The function rstudent() will return the
+studentized residuals, and we can use this function to plot the residuals
+against the fitted values.
+
+```{r}
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+```
+
+On the basis of the residual plots, there is some evidence of non-linearity.
+Leverage statistics can be computed for any number of predictors using the
+hatvalues() function. 
+
+```{r}
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
+The which.max() function identifies the index of the largest element of a
+vector. In this case, it tells us which observation has the largest leverage
+statistic.
+
+### 3.6.3 Multiple Linear Regression
+
+In order to fit a multiple linear regression model using least squares, we
+again use the lm() function. The syntax **lm(y ~ x1 + x2 + x3)** is used to
+fit a model with three predictors, x1, x2, and x3. The summary() function
+now outputs the regression coefficients for all the predictors.
+
+```{r}
+#             y       x1     x2
+lm.fit <- lm(medv ~ lstat + age , data = Boston)
+summary(lm.fit)
+```
+
+The Boston data set contains 12 variables, and so it would be cumbersome
+to have to type all of these in order to perform a regression using all of the
+predictors. Instead, we can use the following short-hand:
+
+```{r}
+m.fit <- lm(medv ~ ., data = Boston)
+summary(lm.fit)
+```
+
+We can access the individual components of a summary object by name
+(type ?summary.lm to see what is available). Hence summary(lm.fit)$r.sq
+gives us the R2, and summary(lm.fit)$sigma gives us the RSE. The vif()
+function, part of the car package, can be used to compute variance inflation
+factors. Most VIF’s are low to moderate for this data. The car package is
+not part of the base R installation so it must be downloaded the first time
+you use it via the install.packages() function in R.
+
+```{r}
+library(car)
+vif(lm.fit)
+```
+
+What if we would like to perform a regression using all of the variables but
+one? For example, in the above regression output, age has a high p-value.
+So we may wish to run a regression excluding this predictor. The following
+syntax results in a regression using all predictors except age.
+
+```{r}
+lm.fit1 <- lm(medv ~ . - age , data = Boston)
+summary(lm.fit1)
+```
+
+Alternatively, the update() function can be used. 
+
+```{r}
+lm.fit1 <- update(lm.fit , ~ . - age)
+```
+              
+### 3.6.4 Interaction Terms
+
+It is easy to include interaction terms in a linear model using the lm() func-
+tion. The syntax lstat:age tells R to include an interaction term between
+lstat and age. The syntax lstat * age simultaneously includes lstat, age,
+and the interaction term lstat×age as predictors; it is a shorthand for
+lstat + age + lstat:age.
+
+```{r}
+summary(lm(medv ~ lstat * age , data = Boston))
+```
+
+## Exercises
+
+1. Describe the null hypotheses to which the p-values given in Table 3.4
+correspond. Explain what conclusions you can draw based on these
+p-values. Your explanation should be phrased in terms of sales, TV,
+radio, and newspaper, rather than in terms of the coefficients of the
+linear model.
+
+\textcolor{red}{The null hypotheses associated with table 3.4 are that advertising budgets of “TV”, “radio” or “newspaper” do not have an effect on sales. More precisely $H^{(1)}_0$:$\beta_1$=0, $H^{(2)}_0$:$\beta_2$=0 and $H^{(3)}_0$:$\beta_3$=0. The corresponding p-values are highly significant for “TV” and “radio” and not significant for “newspaper”; so we reject $H^{(1)}_0$ and $H^{(2)}_0$ and we do not reject $H^{(3)}_0$. We may conclude that newspaper advertising budget do not affect sales.}
+
+3. Suppose we have a data set with five predictors, X1 = GPA, X2 =
+IQ, X3 = Level (1 for College and 0 for High School), X4 = Interac-
+tion between GPA and IQ, and X5 = Interaction between GPA and
+Level. The response is starting salary after graduation (in thousands
+of dollars). Suppose we use least squares to fit the model, and get
+$\hat\beta_0$ = 50, $\hat\beta_1$ = 20, $\hat\beta_2$ = 0.07, $\hat\beta_3$ = 35, $\hat\beta_4$ = 0.01, $\hat\beta_5$ = -10.
+
+  (a) Which answer is correct, and why?
+
+  i. For a fixed value of IQ and GPA, high school graduates earn
+more, on average, than college graduates.
+
+  ii. For a fixed value of IQ and GPA, college graduates earn
+more, on average, than high school graduates.
+
+  iii. For a fixed value of IQ and GPA, high school graduates earn
+more, on average, than college graduates provided that the
+GPA is high enough.
+
+  iv. For a fixed value of IQ and GPA, college graduates earn
+more, on average, than high school graduates provided that
+the GPA is high enough.
+
+  (b) Predict the salary of a college graduate with IQ of 110 and a
+GPA of 4.0.
+
+  (c) True or false: Since the coefficient for the GPA/IQ interaction
+term is very small, there is very little evidence of an interaction
+effect. Justify your answer
+
+9. This question involves the use of multiple linear regression on the
+Auto data set.
+
+  (a) Produce a scatterplot matrix which includes all of the variables
+in the data set.
+
+```{r}
+library(ISLR) # Auto dataset is in ISLR library
+pairs(Auto)
+```
+
+  (b) Compute the matrix of correlations between the variables using
+the function cor(). You will need to exclude the name variable, cor()
+which is qualitative.
+
+```{r}
+names(Auto)
+cor(Auto[1:8]) # excluding name variable
+```
+
+  (c) Use the lm() function to perform a multiple linear regression
+with mpg as the response and all other variables except name as
+the predictors. Use the summary() function to print the results.
+Comment on the output. For instance:
+
+  i. Is there a relationship between the predictors and the response?
+  
+```{r}
+fit2 <- lm(mpg ~ . - name, data = Auto)
+summary(fit2)
+```
+
+\textcolor{red}{We can answer this question by again testing the hypothesis $H_0$:$\beta_i$=0 $\forall_i$. The p-value corresponding to the F-statistic is $2.2\times10^{-16}$, this indicates a clear evidence of a relationship between “mpg” and the other predictors.}
+
+  ii. Which predictors appear to have a statistically significant
+relationship to the response?
+
+\textcolor{red}{We can answer this question by checking the p-values associated with each predictor’s t-statistic. We may conclude that all predictors are statistically significant except “cylinders”, “horsepower” and “acceleration”. (Note: the significance code for these are 0.1)}
+
+  iii. What does the coefficient for the year variable suggest?
+  
+\textcolor{red}{The coefficient ot the “year” variable suggests that the average effect of an increase of 1 year is an increase of 0.7507727 in “mpg” (all other predictors remaining constant). In other words, cars become more fuel efficient every year by almost 1 mpg / year.}
+  
+  (d) Use the plot() function to produce diagnostic plots of the linear
+regression fit. Comment on any problems you see with the fit.
+Do the residual plots suggest any unusually large outliers? Does
+the leverage plot identify any observations with unusually high
+leverage?
+
+```{r}
+par(mfrow = c(2, 2))
+plot(fit2)
+```
+
+\textcolor{red}{As before, the plot of residuals versus fitted values indicates the presence of mild non linearity in the data. The plot of standardized residuals versus leverage indicates the presence of a few outliers (higher than 2 or lower than -2) and one high leverage point (point 14).}
+
+  (e) Use the * and : symbols to fit linear regression models with
+interaction effects. Do any interactions appear to be statistically
+significant?
+
+\textcolor{red}{From the correlation matrix, we obtained the two highest correlated pairs and used them in picking interaction effects.}
+
+```{r}
+fit3 <- lm(mpg ~ cylinders * displacement+displacement * weight, data = Auto[, 1:8])
+summary(fit3)
+```
+
+\textcolor{red}{From the p-values, we can see that the interaction between displacement and weight is statistically signifcant, while the interactiion between cylinders and displacement is not}
