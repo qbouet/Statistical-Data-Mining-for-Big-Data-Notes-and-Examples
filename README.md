@@ -1,2 +1,5 @@
 # Statistical Data Mining for Big Data
-Here lie notes and examples for Statistical Data Mining for Big Data. These notes were written in R Markdown files for convience as R was used to compute and analyse statistics.
+Here lie notes and examples for Statistical Data Mining for Big Data. These notes and examples follow the following textbook:
+
+**An Introduction to Statistical Learning**
+*with Applications in R*
