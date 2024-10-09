@@ -72,7 +72,7 @@ Discuss the following topics:
   
   - What is synergy effect?
   
-  \textcolor{red}{The synergy effect also known as the interaction effect is when predictors are not independent and affect one another. For example, the sales in radio advertising will have an effect on the sales for tv advertising. In other words, SEE RECORDING. The model requires an extra term to take into consideration the syngery effect.}
+  \textcolor{red}{The synergy effect also known as the interaction effect is when predictors are not independent and affect one another. For example, in marketing, the synergy between online and offline advertising might result in a higher sales increase than either method alone would generate. In other words, \textbf{it refers to the situation where the combined effect of two or more variables is greater than the sum of their individual effects.} Synergy implies that variables enhance each other's effect when combined. It can indicate that a specific combination of factors leads to better outcomes than expected if each factor were acting independently. The model requires an extra term to take into consideration the syngery effect.}
   
   - How can synergy effect be tested in linear model setting?
   
@@ -84,9 +84,41 @@ Discuss the following topics:
   
   - How can collinearity be tested?
   
+  \textcolor{red}{1. A simple way to detect collinearity is to look at the \textbf{correlation matrix of the predictors}. An element of this matrix that is large in absolute value indicates a pair of highly correlated variables, and therefore a collinearity
+problem in the data. Unfortunately, not all collinearity problems can be
+detected by inspection of the correlation matrix: it is possible for collinear-
+ity to exist between three or more variables even if no pair of variables
+has a particularly high correlation. We call this situation multicollinearity.}
+
+\textcolor{red}{2. Instead of inspecting the correlation matrix, a better way to assess multicollinearity is to compute the \textbf{variance inflation factor (VIF)}. The VIF is variance inflation factor the ratio of the variance of $\hat{\beta}_j$ when fitting the full model divided by the variance of $\hat{\beta}_j$ if fit on its own. The smallest possible value for VIF is 1, which indicates the complete absence of collinearity. Typically in practice there is a small amount of collinearity among the predictors. As a rule of
+thumb, a VIF value that exceeds 5 or 10 indicates a problematic amount of
+collinearity. The VIF for each variable can be computed using the formula:}
+
+![](VIF.png)
+
+  - Difference between Synergy and Collinearity?
+  
+  \textcolor{red}{Collinearity refers to the statistical redundancy of variables, while synergy refers to an interaction where variables amplify each other's effects. Collinearity can complicate analysis due to redundancy, while synergy can enhance outcomes through collaboration.}
+  
   - What is a odds ratio?
   
+  \textcolor{red}{A statistic that quantifies the strength of the association between two events, A and B.}
+  
+  \[\text{odds ratio} = \frac{P(y = 1 | \text{Student})}{P(y = 1 | \text{Non-Student)}}\]
+  
+  \[\text{log odds ratio} = \log[\frac{P(y = 1 | \text{Student})}{P(y = 1 | \text{Non-Student)}}]\]
+  
   - What is Simpson’s paradox?
+  
+  \textcolor{red}{Simpson's paradox occurs when a trend that appears in several different groups of data reverses when the data are combined into a single dataset.}
+  
+  ![](SP1.png)
+  
+  ![](SP2.png)
+  
+  \textcolor{red}{https://www.youtube.com/watch?v=t-Ci3FosqZs}
+  
+  \textcolor{red}{https://www.youtube.com/watch?v=bArPxj5xhso}
   
   
 ## Exercises - Part 1
