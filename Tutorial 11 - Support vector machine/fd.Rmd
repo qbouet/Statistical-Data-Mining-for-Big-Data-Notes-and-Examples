@@ -1,45 +1,12 @@
+
 ---
-title: "Tutorial 8"
-author: "Quentin Bouet"
-date: "2024-10-09"
-output:
-  pdf_document:
-    highlight: breezedark
-  word_document: default
-  html_document:
-    df_print: paged
-editor_options:
-  markdown:
-    wrap: 72
+title: "Classification and Regression Trees"
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-# Tree Based Methods
-
-In this week’s lecture, you are introduced to the concept of classification and regression trees (CART). In the lecture, we focused on the theory and algorithm. In this tutorial, we will apply CART to a real dataset. There are a lot of different ways that the tree can be built and we will consider a few approaches. One major draw back of CART is the poor predictive power. Many methods have been proposed to improve the predictive power of CARTS. Next week, we will discuss bagging, random forest and boosted trees, which are algorithm developed to improve the predictability of tree.
-
-Discuss the following topics
-
-  • What is NP problem?
-  
-  • Discuss morphological differences between classification and regression trees
-  
-  • How does CART grow? How do you find the optimal splits?
-  
-  • Explain what is the greedy algorithm
-  
-  • Explain what is the cost-complexity criteria and the objective of the criteria
-  
-  • How does CART build a regression tree?
-  
-  • What is surrogate split?
-
-## Independendent Learning
-
-### 8.3.1 Fitting Classification Trees
 
 ## Loading Required Libraries
 The `tree` library is used to construct classification and regression trees.
@@ -149,8 +116,3 @@ tree.pred <- predict(prune.carseats, Carseats.test, type = "class")
 table(tree.pred, High.test)
 (102 + 52) / 200
 ```
-
-
-
-## Exercises
-
